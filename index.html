@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>ST Admin</title>
+<meta name="theme-color" content="#FFFFFF">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="images/admin-192.png" type="image/png">
+<link rel="apple-touch-icon" href="images/admin-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ST Admin">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="adm">
+<header class="abar"><div class="aw">
+  <img src="images/admin-192.png" alt=""><b>ST Admin</b>
+  <span class="sync" id="sync" hidden></span>
+  <button type="button" class="sync outp" id="outbox" hidden></button>
+  <button class="tbtn coin" id="updbtn" hidden>Update</button>
+  <button class="tbtn" id="install" hidden>Install</button>
+  <button class="tbtn" id="logout" hidden>Sign out</button>
+</div></header>
+
+<main>
+  <section class="aw alogin" id="login">
+    <form class="panel" id="lf">
+      <h1>Sign in</h1>
+      <div id="lmsg"></div>
+      <div class="field"><label for="key">Admin key</label><input id="key" type="password" autocomplete="current-password" required></div>
+      <button class="btn block">Sign in</button>
+      <p class="muted" style="margin-top:12px">Tip: tap Install at the top to add ST Admin to your home screen. It is a separate app from the customer app.</p>
+    </form>
+  </section>
+
+  <section class="aw" id="app" hidden>
+    <div class="srvwarn" id="srvwarn" hidden></div>
+    <nav class="atabs" role="tablist">
+      <button role="tab" data-tab="orders" aria-selected="true">Orders <span class="cnt" id="n-orders"></span></button>
+      <button role="tab" data-tab="items" aria-selected="false">Items</button>
+      <button role="tab" data-tab="cats" aria-selected="false">Categories</button>
+      <button role="tab" data-tab="customers" aria-selected="false">Customers</button>
+      <button role="tab" data-tab="offers" aria-selected="false">Offers <span class="cnt live" id="n-offers"></span></button>
+      <button role="tab" data-tab="gifts" aria-selected="false">Gifts <span class="cnt" id="n-gifts"></span></button>
+      <button role="tab" data-tab="settings" aria-selected="false">Settings</button>
+    </nav>
+
+    <div data-pane="orders">
+      <div class="ostats" id="ostats"></div>
+      <div class="atools">
+        <select id="ofilter" aria-label="Show"><option value="Placed">New (placed)</option><option value="Delivered">Delivered</option><option value="Cancelled">Cancelled</option><option value="all">All orders</option></select>
+        <input id="oq" type="search" placeholder="Name, phone or order no." aria-label="Search orders">
+        <button class="btn sm ghost" data-sync>Refresh</button>
+      </div>
+      <div id="olist" class="orows"></div>
+    </div>
+
+    <div data-pane="items" hidden>
+      <div class="atools">
+        <input id="iq" type="search" placeholder="Search items" aria-label="Search items">
+        <select id="icat" aria-label="Category"></select>
+        <select id="ishow" aria-label="Show"><option value="all">All items</option><option value="out">Out of stock</option><option value="hidden">Hidden from app</option><option value="noprice">No price</option><option value="nophoto">No photo</option><option value="opts">With options</option></select>
+      </div>
+      <div class="atools">
+        <button class="btn sm gold" id="iadd">Add item</button>
+        <button class="btn sm ghost" id="istarter" hidden></button>
+        <label class="btn sm ghost" for="bulkfile">Upload many photos</label><input type="file" id="bulkfile" accept="image/*" multiple class="sr">
+        <button class="btn sm ghost" id="ilink">Link photos from Drive</button>
+      </div>
+      <p class="muted" id="bulkmsg" style="margin:0 0 8px" hidden></p>
+      <p class="muted" style="margin:0 0 8px">Change price, stock or visibility here, then press Save. Points are given automatically by price (Settings); type points only to override.</p>
+      <div id="ilist"></div>
+    </div>
+
+    <div data-pane="cats" hidden>
+      <div class="atools"><button class="btn sm gold" id="cadd">Add category</button></div>
+      <p class="muted" style="margin:0 0 8px">Order decides where a category shows in the app. A photo is optional; without one the app shows an item photo from that category.</p>
+      <div id="catlist"></div>
+    </div>
+
+    <div data-pane="customers" hidden>
+      <div class="atools"><input id="cq" type="search" placeholder="Name, phone or village" aria-label="Search customers">
+        <select id="csort" aria-label="Sort"><option value="amount">Highest order amount</option><option value="recent">Recently active</option><option value="points">Most points</option></select></div>
+      <div id="clist"></div>
+    </div>
+
+    <div data-pane="gifts" hidden>
+      <h2 class="ah">Gift requests</h2>
+      <div id="rlist"></div>
+      <h2 class="ah">Gift catalogue <button class="btn sm gold" id="gadd">Add gift</button></h2>
+      <p class="muted" style="margin:0 0 8px">Only gifts switched on appear in the app. Stock empty means unlimited. Each customer can take each gift only once (a rejected request does not count).</p>
+      <div id="glist"></div>
+    </div>
+
+    <div data-pane="offers" hidden>
+      <div class="atools"><button class="btn sm gold" id="ofadd">Add offer</button></div>
+      <p class="muted" style="margin:0 0 8px">Offer banners slide at the top of the customer app's home page between their start and end dates. Tapping one can open a category or an item.</p>
+      <div id="oflist"></div>
+    </div>
+
+    <div data-pane="settings" hidden>
+      <form class="panel" id="sf" style="margin:0"></form>
+    </div>
+  </section>
+</main>
+
+<div class="savebar" id="savebar"><div class="aw"><span id="dcount"></span><button class="btn sm ghost" id="discard">Discard</button><button class="btn sm gold" id="save">Save changes</button></div></div>
+
+<dialog id="dlg">
+  <form id="pf" method="dialog">
+    <div class="dh"><h2 id="dtitle">Item</h2><button type="button" class="btn sm ghost" data-close>Close</button></div>
+    <div class="db" id="dbody"></div>
+    <div class="df" id="dfoot"><button type="button" class="btn sm danger" id="pdel">Delete</button><span style="flex:1"></span><button type="button" class="btn sm ghost" data-close>Cancel</button><button class="btn sm" id="psave">Save</button></div>
+  </form>
+</dialog>
+
+<dialog id="odlg"><div id="obody"></div></dialog>
+
+<script src="config.js"></script>
+<script src="i18n.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
